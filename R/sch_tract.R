@@ -50,7 +50,10 @@ tract_pop <- data.frame(kc_tracts@data)
 ###########
 names(schools_tract)
 # Add other education data sets 
-#source(___)
+#source(___nces_preprocess.R)
+
+wa_sch_dems %>%
+  glimpse()
 
 sch_census <- left_join(schools_tract, tract_pop, by = c("tract"="GEO_ID_TRT"))
 
