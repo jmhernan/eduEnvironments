@@ -32,13 +32,15 @@ str(sch_test)
 sch_ela = sch_test %>%
   filter(Subject == "ELA", StudentGroup == "All", !is.na(District)) %>%
   group_by(DistrictCode, School, SchoolCode) %>%
-  summarise(pass_ela = sum(as.numeric(countMetStandardIncludingPP), na.rm=T))
+  summarise(pass_ela = sum(as.numeric(countMetStandardIncludingPP), na.rm=T)) %>%
+  filter(!is.na(DistrictCode))
 
 
 sch_math = sch_test %>%
   filter(Subject == "Math" | Subject == "MATH", StudentGroup == "All", !is.na(District)) %>%
   group_by(DistrictCode, School, SchoolCode) %>%
-  summarise(pass_math = sum(as.numeric(countMetStandardIncludingPP), na.rm=T))
+  summarise(pass_math = sum(as.numeric(countMetStandardIncludingPP), na.rm=T)) %>%
+  filter(!is.na(DistrictCode))
 
 scores = left_join(sch_math, sch_ela, by = c("DistrictCode", "School", "SchoolCode"))
 
@@ -54,7 +56,7 @@ table(n_df$TOTAL_INDICATOR)
 
 totals <- n_df %>%
   filter(TOTAL_INDICATOR == "Education Unit Total") %>%
-  select(LEAID, SCH_NAME, SCHID, NCESSCH, Total=STUDENT_COUNT)
+  select(LEAID, SCH_NAME, SCHID, NCESSCH, Total=STUDENT_COUNT) 
 
 race <- n_df %>%
   filter(TOTAL_INDICATOR == "Category Set A - By Race/Ethnicity; Sex; Grade") %>%
@@ -78,17 +80,14 @@ all_df <- left_join(all_df, income, by = c("SCH_NAME", "SCHID", "NCESSCH"))
 
 names(all_df)
 
-all_df <- all_df %>%
+wa_sch_dems <- all_df %>%
   mutate(frl = (`Freelunchqualified` + `Reducedpricelunchqualified`)/Total) %>%
   mutate(AIAN_p = AmericanIndianorAlaskaNative/Total, 
          AS_p = Asian/Total,
          B_p = BlackorAfricanAmerican/Total,
          Hi_p = HispanicLatino/Total,
          NHP = NativeHawaiianorOtherPacificIslander/Total,
-         Wh_p = White/Total)
+         Wh_p = White/Total,
+         NCESSCH = as.character(NCESSCH))
 
-all_df <- left_join(all_df, scores, by = c("SCH_NAME" = "School")) 
-
-wa_sch_dems = all_df %>%
-  mutate(pass_math_p = pass_math/Total,
-         pass_ela_p = pass_ela/Total)
+wa_sch_dems %>% select(NCESSCH) %>% nrow() == wa_sch_dems %>% select(NCESSCH) %>% unique() %>% nrow()

@@ -28,6 +28,7 @@ crdc_vars <-  crdc_df %>%
          suspen_tot_black = SCH_DISCWODIS_SINGOOS_BL_F  + SCH_DISCWODIS_SINGOOS_BL_M + 
            SCH_DISCWODIS_ISS_BL_F  + SCH_DISCWODIS_ISS_BL_M + 
            SCH_DISCWODIS_MULTOOS_BL_M  + SCH_DISCWODIS_MULTOOS_BL_F) %>%
-  select(1:8, enrollment_tot, absent_tot, refferal_tot, suspen_tot, suspen_tot_black)
+  select(1:8, enrollment_tot, absent_tot, refferal_tot, suspen_tot, suspen_tot_black, 
+         SCH_FTESECURITY_LEO, SCH_FTECOUNSELORS, SCH_FTETEACH_NOTCERT)
 
 names(crdc_vars)
