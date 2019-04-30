@@ -45,6 +45,10 @@ sch_math = sch_test %>%
 scores = left_join(sch_math, sch_ela, by = c("DistrictCode", "School", "SchoolCode"))
 
 
+scores <- data.frame(scores) 
+scores <- scores %>%
+  mutate(DistrictCode = as.character(DistrictCode),
+         SchoolCode = as.character(SchoolCode))
 
 str(n_df)
 ####PCA EXPLORATORY

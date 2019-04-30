@@ -383,13 +383,19 @@ fviz_gap_stat(gap_stat)
 names(hhc_test) # add relevanr vars
 el_midd <- hhc_test %>%
   group_by(cluster) %>%
-  summarise_at(vars(frl,PP2005,MHHI1,Wh_p,Hi_p,B_p, suspend_p, suspen_p_black,pass_ela_p,pass_math_p,
-                    PWNH,PNW,PFB5, ch_absent_p,
+  summarise_at(vars(frl,PP2005,MHHI1,Wh_p,Hi_p,AIAN_p,B_p,AS_p,suspend_p, suspen_p_black,pass_ela_p,pass_math_p,
+                    PWNH,PNW,PFB5,PBNH, ch_absent_p,
                     refferal_p,`e(0)`,Percent17Under,PercentOtherLang),"mean")
 
 names(el_midd)
 elem_midd <- el_midd %>%
-  select(cluster, frl, Wh_p, ,B_p, )
+  select(cluster, frl, Wh_p,AS_p,Hi_p, AIAN_p,B_p,suspend_p, suspen_p_black, pass_ela_p, pass_math_p, 
+         ch_absent_p,refferal_p)
+
+elem_midd_geo <- el_midd %>%
+  select(cluster, pv_b_200=PP2005,med_hh_inc=MHHI1 ,white_nh=PWNH,black=PBNH,poc=PNW,foreign_b=PFB5,`e(0)`,Percent17Under,PercentOtherLang)
+write_csv(elem_midd_geo, "/Users/josehernandez/Google Drive File Stream/My Drive/edData/elem_geo.csv")
+write_csv(elem_midd, "/Users/josehernandez/Google Drive File Stream/My Drive/edData/elem_mid.csv")
 ##########
 # look at the groupings 
 head(schools_tract)
@@ -407,7 +413,7 @@ hhc_test <- inner_join(hhc_test, schools_loc, by = c("ncesid"="NCESSCH")) %>%
 str(hhc_test$cluster)
 
 pal <- colorFactor(
-  palette = c('red', 'blue', 'green', 'purple', 'orange'),
+  palette = "Dark2",
   domain = hhc_test$cluster
 )
 
@@ -417,7 +423,7 @@ leaflet(hhc_test) %>% addProviderTiles(providers$CartoDB.Positron) %>%
   addCircleMarkers(hhc_test, lng = hhc_test$LON, 
                    lat = hhc_test$LAT,
                    label = ~hhc_test$name,
-                   radius = 5,
+                   radius = 10,
                    stroke = FALSE, fillOpacity = 0.5, color = ~pal(cluster)) %>%
   addLegend(pal = pal, values = ~cluster, opacity = 1)
 #####

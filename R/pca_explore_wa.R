@@ -109,7 +109,7 @@ library(ggfortify)
 
 autoplot(sch_pca, data = pca_dat)
 
-autoplot(kmeans(pca_dat, 3), data = pca_dat)
+
 ########################
 library(caret)
 library(Rtsne)
@@ -118,9 +118,9 @@ tsne_model_1 = Rtsne(as.matrix(pca_dat), check_duplicates=FALSE, pca=T, perplexi
 
 d_tsne_1 = as.data.frame(tsne_model_1$Y) 
 
-d_tsne_1 = bind_cols(d_tsne_1,pca_dat %>% select(LEAID) %>% mutate(LEAID = as.character(LEAID)))
+# d_tsne_1 = bind_cols(d_tsne_1,pca_dat %>% select(LEAID) %>% mutate(LEAID = as.character(LEAID)))
 
-ggplot(d_tsne_1, aes(x=V1, y=V2, colour = LEAID)) +  
+ggplot(d_tsne_1, aes(x=V1, y=V2)) +  
   geom_point(size=0.25) +
   #guides(colour=guide_legend(override.aes=list(size=6))) +
   xlab("") + ylab("") +
@@ -128,26 +128,26 @@ ggplot(d_tsne_1, aes(x=V1, y=V2, colour = LEAID)) +
   theme_light(base_size=20) +
   theme(legend.position="none")
 
-ggsave("WA_sch_test2.png")
+
 
 ######
 d_tsne_1_original=d_tsne_1
 
 ## Creating k-means clustering model, and assigning the result to the data used to create the tsne
-fit_cluster_kmeans=kmeans(scale(d_tsne_1), 3)  
+fit_cluster_kmeans=kmeans(scale(d_tsne_1), 4)  
 d_tsne_1_original$cl_kmeans = factor(fit_cluster_kmeans$cluster)
 
 ## Creating hierarchical cluster model, and assigning the result to the data used to create the tsne
 fit_cluster_hierarchical=hclust(dist(scale(d_tsne_1)))
 
 ## setting 3 clusters as output
-d_tsne_1_original$cl_hierarchical = factor(cutree(fit_cluster_hierarchical, k=7))  
+d_tsne_1_original$cl_hierarchical = factor(cutree(fit_cluster_hierarchical, k=4))  
 
 
 plot_cluster=function(data, var_cluster, palette)  
 {
   ggplot(data, aes_string(x="V1", y="V2", color=var_cluster)) +
-    geom_point(size=0.25) +
+    geom_point(size=0.50) +
     guides(colour=guide_legend(override.aes=list(size=6))) +
     xlab("") + ylab("") +
     ggtitle("") +
@@ -177,7 +177,7 @@ clust1 %>%
             mn_b = mean(B_p),
             mn_h = mean(Hi_p))
 
-kmeans(scale(d_tsne_1), 3) 
+kmeans(scale(d_tsne_1), 4) 
 
 wss <- function(k) {
   kmeans(scale(d_tsne_1), k, nstart = 10 )$tot.withinss
@@ -193,4 +193,4 @@ plot(k.values, wss_values,
      type="b", pch = 19, frame = FALSE, 
      xlab="Number of clusters K",
      ylab="Total within-clusters sum of squares")
-
+###############
